@@ -9,6 +9,9 @@ import router from './router'
 import axios from 'axios'
 import $ from 'jquery'
 import VueHtml5Editor from 'vue-html5-editor'
+import {post,get} from './utils/http'
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)

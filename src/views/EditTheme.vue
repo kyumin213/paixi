@@ -11,6 +11,52 @@
             <el-form-item label="专题描述" prop="bewrite">
               <el-input v-model="ruleForm.bewrite" placeholder="请输入专题描述"></el-input>
             </el-form-item>
+            <el-form-item label="节日名称" prop="festivalName">
+              <el-input v-model="ruleForm.festivalName" placeholder="请输入节日名称"></el-input>
+            </el-form-item>
+            <el-form-item label="节日简介" prop="festivalBrief">
+              <el-input v-model="ruleForm.festivalBrief" placeholder="请输入节日简介"></el-input>
+            </el-form-item>
+            <el-form-item label="节日时间" prop="festivalTime">
+            <el-date-picker
+      v-model="ruleForm.festivalTime"  
+      type="datetime"
+      placeholder="请选择节日时间"
+      value-format="yyyy-MM-dd HH:mm:ss"
+       @change="getFestTime"
+      >
+    </el-date-picker>
+            </el-form-item>
+            <el-form-item label="节目描述" prop="bewrite">
+              <el-input v-model="ruleForm.festivalText" type="textarea" placeholder="请输入节目描述"></el-input>
+            </el-form-item>
+            <el-form-item label="专题背景" prop="background">
+               <el-upload
+                  class="avatar-uploader"
+                  :action="uploadUrl"
+                  name="uploadFile"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccessBackground"
+                  :data="uploadBackground">
+                  <img v-if="ruleForm.background" :src="ruleForm.background" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              </el-upload>
+            </el-form-item>
+            <el-form-item label="节目科普背景" prop="festivalBanner">
+              <!-- <el-input v-model="ruleForm.festivalBanner" placeholder="请选择节目科普背景"></el-input> -->
+                <el-upload
+                  class="avatar-uploader"
+                  :action="uploadUrl"
+                  name="uploadFile"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccessFestival"
+                  :data="uploadFestBanner">
+                  <img v-if="ruleForm.festivalBanner" :src="ruleForm.festivalBanner" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              </el-upload>
+            </el-form-item>
             
             <el-form-item label="专题上架时间">
               <el-date-picker
@@ -79,180 +125,226 @@
     </div>
   </section>
 </template>
-<style>
-.tips{
-    display: inline-block;
-    margin-left: 15px;
-    color: #b3b3b3;
-}
-.theme-container{
-  margin-top: 20px;
-}
-.avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 150px;
-    height: 150px;
-    line-height: 150px;
-    text-align: center;
-  }
-  .avatar {
-    width: 150px;
-    height: auto;
-    display: block;
-  }
-</style>
+
 
 <script>
-import { baseUrl } from '@/config/env'
-import { baseImgPath } from '@/config/env'
-import { getStore } from '@/config/mUtils'
+import { baseUrl } from "@/config/env";
+import { baseImgPath } from "@/config/env";
+import { getStore } from "@/config/mUtils";
 export default {
-  name: 'EditTheme',
+  name: "EditTheme",
   data() {
-      return {
-        token: getStore('token'),
-        id: this.$route.params.id,
-        uploadUrl: baseImgPath + 'picture/oss/upload/multi',
-        upLoadData: {
-          token: getStore('token'),
+    return {
+      token: getStore("token"),
+      id: this.$route.params.id,
+      uploadUrl: baseImgPath + "picture/oss/upload/multi",
+      upLoadData: {
+        token: getStore("token")
         //   fileName: 'http://image.prise.shop/images/2018/04/03/1522736335352510.png'
-        },
-        pictureBanner: '',
-        upLoadDataBanner: {
-          token: getStore('token'),
-          // fileName: ''
-        },
-        list: [],
-        ruleForm: {},
-        rules: {
-          name: [
-            { required: true, message: '请输入专题名称', trigger: 'blur' },
-            { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-          ],
-          bewrite: [
-            { required: true, message: '请输入专题描述', trigger: 'blur' }
-          ],
-          sortOrder: [
-            { required: true, trigger: 'change' }
-          ],
-          pictureCover: [
-            { required: true }
-          ],
-          resource: [
-            { required: true, message: '请选择活动资源', trigger: 'change' }
-          ]
-        }
-      };
+      },
+      uploadBackground: {
+        token: getStore("token")
+      },
+      uploadFestBanner: {
+        token: getStore("token")
+      },
+      pictureBanner: "",
+      upLoadDataBanner: {
+        token: getStore("token")
+        // fileName: ''
+      },
+      list: [],
+      ruleForm: {},
+      rules: {
+        name: [
+          { required: true, message: "请输入专题名称", trigger: "blur" },
+          { min: 1, max: 20, message: "长度在 1 到 20 个字符", trigger: "blur" }
+        ],
+        bewrite: [
+          { required: true, message: "请输入专题描述", trigger: "blur" }
+        ],
+        sortOrder: [{ required: true, trigger: "change" }],
+        pictureCover: [{ required: true }],
+        festivalBanner: [{ required: true }],
+        background: [{ required: true }],
+        resource: [
+          { required: true, message: "请选择活动资源", trigger: "change" }
+        ],
+        festivalName: [
+          { required: true, message: "请输入界面名称", trigger: "change" }
+        ],
+        festivalBrief: [
+          { required: true, message: "请输入节目简介", trigger: "change" }
+        ],
+        festivalTime: [
+          { required: true, message: "请选择节目时间", trigger: "change" }
+        ],
+        festivalText: [
+          { required: true, message: "请输入节目描述", trigger: "change" }
+        ]
+      }
+    };
+  },
+  methods: {
+    getStartTime(date) {
+      this.startTime = date;
+      console.log(date);
     },
-    methods: {
-      getStartTime (date) {
-        this.startTime = date;
-        console.log(date)
-      },
-      getEndTime (date) {
-        this.endTime = date;
-        console.log(date)        
-      },
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            var _this = this
-            $.ajax({
-              url: baseUrl+'product/special/modify',
-              type: 'POST',
-              dataType: 'json',
-              data: {
-                token: this.token,
-                id: this.id,
-                name: this.ruleForm.name,
-                pictureCover: this.ruleForm.pictureCover,
-                pictureBanner: 'https://image.prise.shop/images/2018/06/27/1530087052454036.jpg',
-                sortOrder: this.ruleForm.sortOrder,
-                bewrite: this.ruleForm.bewrite,
-                category: this.ruleForm.category,
-                beginTime: this.ruleForm.beginTime,
-                endTime: this.ruleForm.endTime
-              }
-            })
-            .done((data) => {
-              console.log(data)
+    getFestTime(date) {
+      this.ruleForm.festivalTime = date;
+    },
+    getEndTime(date) {
+      this.endTime = date;
+      console.log(date);
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          var _this = this;
+          let festivalTime = _this.ruleForm.festivalTime;
+          $.ajax({
+            url: baseUrl + "product/special/modify",
+            type: "POST",
+            dataType: "json",
+            data: {
+              token: this.token,
+              id: this.id,
+              name: this.ruleForm.name,
+              pictureCover: this.ruleForm.pictureCover,
+              festivalBanner: this.ruleForm.festivalBanner,
+              background: this.ruleForm.background,
+              pictureBanner:
+                "https://image.prise.shop/images/2018/06/27/1530087052454036.jpg",
+              sortOrder: this.ruleForm.sortOrder,
+              bewrite: this.ruleForm.bewrite,
+              category: this.ruleForm.category,
+              beginTime: this.ruleForm.beginTime,
+              endTime: this.ruleForm.endTime,
+              festivalName: this.ruleForm.festivalName,
+              festivalBrief: this.ruleForm.festivalBrief,
+              festivalTime: _this.ruleForm.festivalTime,
+              festivalText: this.ruleForm.festivalText
+            }
+          })
+            .done(data => {
+              console.log(data);
               if (data.status == 200) {
                 this.$message({
                   type: "success",
                   message: "修改专题成功"
-                })
+                });
                 // this.$router.go(0)
-                this.$router.push({ path: '/themeList' })
+                this.$router.push({ path: "/themeList" });
               } else {
-                this.$message.error(data.msg)
+                this.$message.error(data.msg);
               }
             })
-            .fail(function (data) {
-              console.log(data)
-            })
-            return false
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },
-      handleChange(value) {
-        console.log(value)
-      },
-      handleAvatarSuccess(res, file) {
-        if (res.status == 200) {
-          this.ruleForm.pictureCover = res.bean
-        }
-        // this.ruleForm.imageUrlCover = URL.createObjectURL(file.raw);
-      },
-      handleAvatarSuccessBanner(res, file) {
-        if (res.status == 200) {
-          this.ruleForm.pictureBanner = res.bean
-          this.$message({
-            type: "success",
-            message: "图片已替换成功，请稍后刷新"
-          })
+            .fail(function(data) {
+              console.log(data);
+            });
+          return false;
         } else {
-          this.$message.error(res.msg)
+          console.log("error submit!!");
+          return false;
         }
-      },
-      getData () {
-        console.log('id:' + this.id)
-        jQuery.get(baseUrl + 'product/special/get', {token: this.token, id: this.id},(data) => {
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    handleChange(value) {
+      console.log(value);
+    },
+    handleAvatarSuccess(res, file) {
+      if (res.status == 200) {
+        this.ruleForm.pictureCover = res.bean;
+      }
+      // this.ruleForm.imageUrlCover = URL.createObjectURL(file.raw);
+    },
+    // 节目背景
+    handleAvatarSuccessBackground(res, file) {
+      if (res.status == 200) {
+        this.ruleForm.background = res.bean;
+      }
+      // this.ruleForm.imageUrlCover = URL.createObjectURL(file.raw);
+    },
+    // 节目科普背景
+    handleAvatarSuccessFestival(res, file) {
+      if (res.status == 200) {
+        this.ruleForm.festivalBanner = res.bean;
+      }
+      // this.ruleForm.imageUrlCover = URL.createObjectURL(file.raw);
+    },
+    handleAvatarSuccessBanner(res, file) {
+      if (res.status == 200) {
+        this.ruleForm.pictureBanner = res.bean;
+        this.$message({
+          type: "success",
+          message: "图片已替换成功，请稍后刷新"
+        });
+      } else {
+        this.$message.error(res.msg);
+      }
+    },
+    getData() {
+      console.log("id:" + this.id);
+      jQuery.get(
+        baseUrl + "product/special/get",
+        { token: this.token, id: this.id },
+        data => {
           if (data.status == 200) {
-            this.ruleForm = data.bean
-            this.ruleForm.category = data.bean.category.toString()
+            this.ruleForm = data.bean;
+            this.ruleForm.category = data.bean.category.toString();
             // this.upLoadDataBanner.fileName = data.bean.pictureBanner
-            console.log(data.bean)
+            console.log(data.bean);
           }
-        })
-      }
-    },
-    created () {
-      this.getData()
-    },
-    watch: {
-      '$route' (to, from) {
-        if (from.path === '/themeList') {
-          this.id = to.params.id
-          this.getData()
         }
+      );
+    }
+  },
+  created() {
+    this.getData();
+  },
+  watch: {
+    $route(to, from) {
+      if (from.path === "/themeList") {
+        this.id = to.params.id;
+        this.getData();
       }
-    },
-}
+    }
+  }
+};
 </script>
+<style>
+.tips {
+  display: inline-block;
+  margin-left: 15px;
+  color: #b3b3b3;
+}
+.theme-container {
+  margin-top: 20px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 150px;
+  height: 150px;
+  line-height: 150px;
+  text-align: center;
+}
+.avatar {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+</style>

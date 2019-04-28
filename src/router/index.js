@@ -108,8 +108,9 @@ import AddSmallLabel from '@/views/AddSmallLabel'
 import EditSmallLabel from '@/views/EditSmallLabel'
 import SelectLabels from '@/views/SelectLabels'
 import EditSelectedLabels from '@/views/EditSelectedLabels'
-
+import bindTbas from '@/views/bindTabs'
 import auth from './auth'
+import { resolve } from 'path';
 
 Vue.use(Router)
 
@@ -131,6 +132,18 @@ export default new Router({
         name: 'GoodsList',
         component: GoodsList,
         meta: ['商品管理', '商品列表']
+      },
+      {
+        path: '/HomeTabs',
+        name: 'HomeTabs',
+        component: resolve => require(['../views/HomeTabs.vue'], resolve),
+        meta: ['标签管理','标签管理']
+      },
+      {
+        path: '/bindTabs',
+        name: 'bindTabs',
+        component: bindTbas,
+        meta: ['标签绑定','标签绑定']
       },
       {
         path:'/LabelManager',

@@ -175,6 +175,15 @@
           <el-menu-item index="common">限购下期活动时间</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
+      <el-submenu index="15">
+        <template slot="title">
+          <i class="el-icon-tickets"></i>
+          <span>标签管理</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="HomeTabs">标签</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
     </el-menu>
   </el-col>
 </template>

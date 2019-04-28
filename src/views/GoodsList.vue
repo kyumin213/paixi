@@ -140,9 +140,9 @@
                       :value="item.id">
                     </el-option>
                   </el-select>
-                  <!-- <el-button
+                  <el-button
                   size="mini"
-                  @click="handleLabels(scope.$index, scope.row)">添加/编辑标签</el-button> -->
+                  @click="handleLabels(scope.$index, scope.row)">添加/编辑标签</el-button>
               </template>
             </el-table-column>
         </el-table>
@@ -167,6 +167,14 @@
         <el-button type="primary" @click="centerDialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 绑定标签 -->
+    <el-dialog title="绑定标签" :visible.sync="tabModelShow" width="30%">
+      <el-table :data="tabArray">
+        <el-table-column label="id" prop="id"></el-table-column>
+        <el-table-column label="名称" prop="attributeName"></el-table-column>
+        <el-table-column label="parentId" prop="parentId"></el-table-column>
+      </el-table>
+    </el-dialog>
   </section>
 </template>
 <style>
@@ -181,8 +189,7 @@
   width: 160px;
   margin-top: 10px;
 }
-.select-one{
-
+.select-one {
   width: 160px;
   margin-top: 10px;
 }
@@ -222,6 +229,8 @@ export default {
       value2: [],
       list: [],
       list2: [],
+      tabArray:[],//全部标签
+      tabModelShow:false,
       loading: false,
       goodsTitle: "",
       goodsSellpoint: "",
@@ -239,6 +248,21 @@ export default {
     };
   },
   methods: {
+    // 获取全部标签
+    getALLTabs() {
+      let _this = this;
+      $.get(
+        baseUrl + "hierarchys/get/id",
+        { token: _this.token, parentId: 0 },
+        data => {
+          if (data.status == 200) {
+            _this.tabArray = data.bean.hierarchyList;
+          } else {
+            this.$message.error(data.msg);
+          }
+        }
+      );
+    },
     formatDate(ns) {
       var d = new Date(ns);
       var dformat =
@@ -247,17 +271,20 @@ export default {
         [d.getHours(), d.getMinutes(), d.getSeconds()].join(":");
       return dformat;
     },
-    gotoLink (row) {
-      var id = row.id
-      $.get(baseUrl + 'product/get/remark/id',{ token: this.token, productId: id },
+    gotoLink(row) {
+      var id = row.id;
+      $.get(
+        baseUrl + "product/get/remark/id",
+        { token: this.token, productId: id },
         data => {
           if (data.status == 200) {
-            var url = data.bean
-            window.location.href = url
+            var url = data.bean;
+            window.location.href = url;
           } else {
             this.$message.error(data.msg);
           }
-      })
+        }
+      );
     },
     handleSizeChange(val) {
       console.log("每页" + val + "条");
@@ -292,7 +319,16 @@ export default {
         this.goodsSellpoint
       );
     },
-    goodsFilterFun(pageBegin, status, timeBegin, timeEnd, id, title, sellPoint) {
+
+    goodsFilterFun(
+      pageBegin,
+      status,
+      timeBegin,
+      timeEnd,
+      id,
+      title,
+      sellPoint
+    ) {
       $.get(
         baseUrl + "product/get/filter/all",
         {
@@ -335,24 +371,19 @@ export default {
         baseUrl + "product/special/get/all",
         { token: this.token },
         data => {
-          console.log(data.bean);
+          // console.log(data.bean);
           this.themeOptions = data.bean;
         }
       );
     },
     handleEdit(index, row) {
-      this.$router.push({ path: `/EditGoods${row.id}` })
+      this.$router.push({ path: `/EditGoods${row.id}` });
     },
     handleLabels(index, row) {
-      $.get(baseUrl + 'producttags/get/productId', {token: this.token, productId: row.id}, data => {
-        if (data.bean.length < 1) {
-          this.$router.go(0);
-          this.$router.push({ name: "SelectLabels", params: { id: row.id } });
-        } else {
-          this.$router.go(0);
-          this.$router.push({ name: "EditSelectedLabels", params: { id: row.id } });
-        }
-      })
+      let _this = this
+      console.log(row.id)
+      _this.$router.push({name:"bindTabs",params:{id:row.id}})
+
     },
     gotoDetails(index, row) {
       this.$router.go(0);
@@ -398,7 +429,7 @@ export default {
     },
     getThemeLabelList(index, row) {
       var productId = row.id;
-      var specialId = row.themeSelect
+      var specialId = row.themeSelect;
       $.get(
         baseUrl + "product/special/label/get/by/special",
         { token: this.token, specialId: row.themeSelect },
@@ -411,11 +442,11 @@ export default {
     },
     addToTheme(index, row) {
       var productId = row.id;
-      console.log(row.themeLabelSelect)
+      console.log(row.themeLabelSelect);
       for (var i in this.themeLabelOptions) {
         if (row.themeLabelSelect == this.themeLabelOptions[i].id) {
-          var specialId = this.themeLabelOptions[i].specialId
-          var sortOrder = this.themeLabelOptions[i].sortOrder
+          var specialId = this.themeLabelOptions[i].specialId;
+          var sortOrder = this.themeLabelOptions[i].sortOrder;
         }
       }
       $.ajax({
@@ -430,39 +461,44 @@ export default {
           sortOrder: sortOrder
         }
       })
-      .done(data => {
-        if (data.status == 200) {
-          this.$message({
-            type: "success",
-            message: "添加成功！"
-          });
-        } else if (data.status == 501) {
-          this.$message({
-            message: data.msg,
-            type: "warning"
-          });
-        } else {
-          this.$message.error(data.msg);
-        }
-      })
-      .fail(function(data) {
-        console.log(data);
-      });
+        .done(data => {
+          if (data.status == 200) {
+            this.$message({
+              type: "success",
+              message: "添加成功！"
+            });
+          } else if (data.status == 501) {
+            this.$message({
+              message: data.msg,
+              type: "warning"
+            });
+          } else {
+            this.$message.error(data.msg);
+          }
+        })
+        .fail(function(data) {
+          console.log(data);
+        });
     },
     /**
      * 查看商品所属专题
      */
-    gotoSpecial (index, row) {
+    gotoSpecial(index, row) {
       var productId = row.id;
-      this.centerDialogVisible = true
-      $.get(baseUrl + '/producttags/get/product/id', { token: this.token, productId: row.id }, (res) => {
-        if (res.status == 200) {
-          this.specialList = res.bean
+      this.centerDialogVisible = true;
+      $.get(
+        baseUrl + "/producttags/get/product/id",
+        { token: this.token, productId: row.id },
+        res => {
+          if (res.status == 200) {
+            this.specialList = res.bean;
+          }
         }
-      })
-    },
+      );
+    }
   },
   created() {
+    this.getALLTabs()
     this.goodsFilterFun(
       1,
       this.statusvalue,
@@ -475,8 +511,8 @@ export default {
     this.getThemeList();
   },
   watch: {
-    '$route' (to, from) {
-      if (from.name === 'EditGoods' || from.name === 'AddGoods') {
+    $route(to, from) {
+      if (from.name === "EditGoods" || from.name === "AddGoods") {
         this.goodsFilterFun(
           1,
           this.statusvalue,
@@ -488,6 +524,6 @@ export default {
         );
       }
     }
-  },
+  }
 };
 </script>
