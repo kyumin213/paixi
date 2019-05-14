@@ -184,6 +184,33 @@
           <el-menu-item index="HomeTabs">标签</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
+      <el-submenu index="16">
+        <template slot="title">
+          <i class="el-icon-s-cooperation"></i>
+          <span>首页管理</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="IndexBanner">图片</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+      <el-submenu index="17">
+        <template slot="title">
+          <i class="el-icon-data-analysis"></i>
+          <span>活动管理</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="BargainInfo">活动详情</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+      <el-submenu index="18">
+        <template slot="title">
+          <i class="el-icon-receiving"></i>
+          <span>活动规则</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="BargainRole">规则信息</el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
     </el-menu>
   </el-col>
 </template>

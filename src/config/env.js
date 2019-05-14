@@ -12,13 +12,16 @@ let baseImgPath;
 
 if (process.env.NODE_ENV == 'development') {
     baseUrl = 'https://testcms.prise.shop/';
+    // baseUrl = 'https://cms.prise.shop/';
     baseImgPath = 'https://upload.prise.shop/';
 }
 else if (process.env.NODE_ENV == 'testing') {
     baseUrl = 'https://testcms.prise.shop/';
+    // baseUrl = 'https://cms.prise.shop/';
     baseImgPath = 'https://upload.prise.shop/';
 }
 else {
+    // baseUrl = 'https://cms.prise.shop/';
     baseUrl = 'https://testcms.prise.shop/';
     baseImgPath = 'https://upload.prise.shop/';
 }

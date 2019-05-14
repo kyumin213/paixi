@@ -47,18 +47,43 @@
                     <el-input v-model="childList.titleNumber" type="number"></el-input>
                 </el-form-item>
                 <div v-for="(item,index) in arrtibuteArray" :key="item.key">
-                    <el-form-item label="名称">
+                    <el-form-item label="答案">
                         <el-col :span="2"> <span>{{index+1}}</span></el-col>
                         <el-col :span="14"><el-input type="text" v-model="item.text"></el-input></el-col>
                          <el-button type="danger" size="small" style="margin-left: 5px" :disabled="disabled" @click="removeRowGoods(index, item)">删除</el-button>
                     </el-form-item>
                 </div>
                 <el-form-item>
-                    <el-button type="primary" size="small" @click="addAttribute()">新增名称</el-button>
+                    <el-button type="primary" size="small" @click="addAttribute()">新增答案</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="addChildList()">添加</el-button>
                     <el-button @click="canceladdChild()">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+        <!-- 一键添加添加子级 -->
+        <el-dialog title="添加子级" :visible.sync="allAddModel" width="30%" :close-on-click-modal="false" :before-close="canceladdAllChild">
+            <el-form :model="childList" ref="childList" label-width="80px">
+                <el-form-item label="标题">
+                    <el-input v-model="childList.title"></el-input>
+                </el-form-item>
+                <el-form-item label="题目编号">
+                    <el-input v-model="childList.titleNumber" type="number"></el-input>
+                </el-form-item>
+                <div v-for="(item,index) in arrtibuteArray" :key="item.key">
+                    <el-form-item label="答案">
+                        <el-col :span="2"> <span>{{index+1}}</span></el-col>
+                        <el-col :span="14"><el-input type="text" v-model="item.text"></el-input></el-col>
+                         <el-button type="danger" size="small" style="margin-left: 5px" :disabled="disabled" @click="removeRowGoods(index, item)">删除</el-button>
+                    </el-form-item>
+                </div>
+                <el-form-item>
+                    <el-button type="primary" size="small" @click="addAttribute()">新增答案</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="addAllChildList()">添加</el-button>
+                    <el-button @click="canceladdAllChild()">取消</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
@@ -105,6 +130,7 @@ export default {
         token: getStore("token")
       },
       id: "",
+      idList: [],
       tabArray: [],
       arriList: [],
       tabsData: [],
@@ -129,6 +155,7 @@ export default {
       childModel: false, //添加子级
       editTitleModel: false, //修改题目
       editAttriModel: false, //修改属性
+      allAddModel: false, //一键添加子级
       arrtibuteArray: [
         {
           text: ""
@@ -161,7 +188,8 @@ export default {
     };
   },
   created() {
-    this.getALLTabs();
+    let _this = this;
+    _this.getALLTabs();
   },
   mounted: function() {
     var _this = this;
@@ -172,7 +200,7 @@ export default {
       children: []
     };
     var m = [20, 120, 20, 40], //20、120、top、left 位置
-      w = 1280 - m[1] - m[3],
+      w = 1780 - m[1] - m[3],
       h = 800 - m[0] - m[2],
       i = 0,
       root;
@@ -220,7 +248,7 @@ export default {
 
       // Normalize for fixed-depth.
       nodes.forEach(function(d) {
-        d.y = d.depth * 180;
+        d.y = d.depth * 215;
       });
 
       // Update the nodes…
@@ -276,7 +304,7 @@ export default {
       nodeEnter
         .append("svg:text")
         .attr("dy", ".35em")
-        .attr("x", "3em")
+        .attr("x", "6em")
         .attr("class", "pointer")
         .text("添加")
         .style("fill", function(d) {
@@ -289,7 +317,7 @@ export default {
       nodeEnter
         .append("svg:text")
         .attr("dy", ".35em")
-        .attr("x", "5.3em")
+        .attr("x", "8.3em")
         .attr("class", "pointer")
         .text("题目")
         .style("fill", function(d) {
@@ -301,7 +329,7 @@ export default {
       nodeEnter
         .append("svg:text")
         .attr("dy", ".35em")
-        .attr("x", "7.5em")
+        .attr("x", "10.5em")
         .attr("class", "pointer")
         .text("属性")
         .style("fill", function(d) {
@@ -310,6 +338,19 @@ export default {
         .on("click", function(d) {
           attributeUpdate(d);
         });
+      nodeEnter
+        .append("svg:text")
+        .attr("dy", ".35em")
+        .attr("x", "13em")
+        .attr("class", "pointer")
+        .text("一键添加")
+        .style("fill", function(d) {
+          return d.free ? "#f00" : "#f00";
+        })
+        .on("click", function(d) {
+          attributeAddAll(d);
+        });
+
       nodeEnter.append("svg:title").text(function(d) {
         return d.description;
       });
@@ -390,7 +431,7 @@ export default {
     }
     function getNode(parentId) {
       $.ajax({
-        url: "https://testcms.prise.shop/hierarchys/get/id",
+        url: baseUrl + "hierarchys/get/id",
         data: {
           parentId: parentId == 1 ? 0 : parentId,
           token: _this.upLoadData.token
@@ -399,6 +440,7 @@ export default {
           if (result.status == 200) {
             //成功
             let data = result.bean.hierarchyList;
+
             let tit = result.bean.problem;
             if (tit != null) {
               var title = tit.title;
@@ -464,6 +506,29 @@ export default {
         attributeNameEdit: d.attributeName
       };
     }
+    // 一键添加
+    function attributeAddAll(d) {
+      let parentId = d.parentId;
+      let token = { token: _this.upLoadData.token };
+      $.get(
+        baseUrl + "hierarchys/get/id",
+        { token: _this.upLoadData.token, parentId: parentId },
+        data => {
+          if (data.status == 200) {
+            let lists = data.bean.hierarchyList;
+            for (let i = 0; i < lists.length; i++) {
+              _this.idList.push(lists[i].id);
+            }
+            console.log(_this.idList);
+          } else {
+            this.$message.error(data.msg);
+          }
+        }
+      );
+      //   _this.id = _this.idList;
+
+      _this.allAddModel = true;
+    }
   },
 
   methods: {
@@ -481,6 +546,7 @@ export default {
         data => {
           if (data.status == 200) {
             _this.tabArray = data.bean.hierarchyList;
+
             // let arr = data.bean.hierarchyList;
             // sessionStorage.setItem("tabArray", JSON.stringify(arr));
           } else {
@@ -686,6 +752,7 @@ export default {
     // 添加子级属性集合
     addAttribute() {
       let _this = this;
+      console.log(_this.arrtibuteArray);
       _this.arrtibuteArray.push({ text: this.childList.length });
       if (_this.arrtibuteArray.length == 1) {
         _this.disabled = true;
@@ -708,20 +775,67 @@ export default {
         _this.disabled = false;
       }
     },
+    // 一键添加子级
+    addAllChildList() {
+      let _this = this;
+      let arrt = _this.arrtibuteArray;
+      let ids = _this.idList;
+      console.log(_this.idList);
+      let tabData = _this.tabsData;
+      for (let i = 0; i < arrt.length; i++) {
+        _this.arriList.push(arrt[i].text);
+      }
+      let arriLists = _this.arriList;
+      let arrtibu = arriLists.join(",");
+      let idList = ids.join(",");
+      console.log(idList);
+      $.ajax({
+        url: baseUrl + "hierarchys/yiadds",
+        type: "POST",
+        dataType: "json",
+        data: {
+          token: _this.upLoadData.token,
+          id: idList,
+          title: _this.childList.title,
+          titleNumber: parseInt(_this.childList.titleNumber),
+          attributeName: arrtibu
+        }
+      })
+        .done(data => {
+          if (data.status == 200) {
+            _this.$message({
+              type: "success",
+              message: "添加成功"
+            });
+            _this.allAddModel = false;
+            _this.childList.title = "";
+            _this.childList.titleNumber = "";
+            _this.arriList = [];
+            _this.idList = [];
+            _this.arrtibuteArray = [
+              {
+                text: ""
+              }
+            ];
+            //   _this.addChildList()
+          } else {
+            _this.$message.error(data.msg);
+          }
+        })
+        .fail(function(data) {
+          console.log(data);
+        });
+    },
     // 添加子级
     addChildList() {
       let _this = this;
       let arrt = _this.arrtibuteArray;
       let tabData = _this.tabsData;
       for (let i = 0; i < arrt.length; i++) {
-        console.log(arrt[i].text);
         _this.arriList.push(arrt[i].text);
       }
-      console.log(_this.arriList);
       let arriLists = _this.arriList;
       let arrtibu = arriLists.join(",");
-      console.log(arrtibu);
-      console.log(_this.id);
       $.ajax({
         url: baseUrl + "hierarchys/adds",
         type: "POST",
@@ -743,6 +857,7 @@ export default {
             _this.childModel = false;
             _this.childList.title = "";
             _this.childList.titleNumber = "";
+            _this.arriList = [];
             _this.arrtibuteArray = [
               {
                 text: ""
@@ -763,6 +878,19 @@ export default {
       _this.childModel = false;
       _this.childList.title = "";
       _this.childList.titleNumber = "";
+      _this.arrtibuteArray = [
+        {
+          text: ""
+        }
+      ];
+    },
+    // 一键添加取消
+    canceladdAllChild() {
+      let _this = this;
+      _this.allAddModel = false;
+      _this.childList.title = "";
+      _this.childList.titleNumber = "";
+      _this.idList = [];
       _this.arrtibuteArray = [
         {
           text: ""
@@ -829,8 +957,8 @@ export default {
   text-align: right;
 }
 #body {
-  width: 1200px;
-  margin: 0 auto;
+  /* width: 1200px; */
+  margin: 0;
   position: relative;
 }
 
@@ -889,7 +1017,7 @@ a:hover {
 }
 
 .node text {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 path.link {

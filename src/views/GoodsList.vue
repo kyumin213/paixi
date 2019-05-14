@@ -148,7 +148,7 @@
         </el-table>
       </el-col>
     </el-row>
-    <div class="block" style="margin:50px auto;">
+    <div class="block" style="margin:50px auto;text-align:center">
       <el-pagination
         @current-change="handleCurrentChangeQuery"  
         :current-page="currentPage"
@@ -229,8 +229,8 @@ export default {
       value2: [],
       list: [],
       list2: [],
-      tabArray:[],//全部标签
-      tabModelShow:false,
+      tabArray: [], //全部标签
+      tabModelShow: false,
       loading: false,
       goodsTitle: "",
       goodsSellpoint: "",
@@ -380,10 +380,10 @@ export default {
       this.$router.push({ path: `/EditGoods${row.id}` });
     },
     handleLabels(index, row) {
-      let _this = this
-      console.log(row.id)
-      _this.$router.push({name:"bindTabs",params:{id:row.id}})
-
+      let _this = this;
+      let id = row.id;
+      _this.$router.push({ name: "bindTabs", params: { id: row.id } });
+      sessionStorage.setItem("id", row.id);
     },
     gotoDetails(index, row) {
       this.$router.go(0);
@@ -498,7 +498,7 @@ export default {
     }
   },
   created() {
-    this.getALLTabs()
+    this.getALLTabs();
     this.goodsFilterFun(
       1,
       this.statusvalue,

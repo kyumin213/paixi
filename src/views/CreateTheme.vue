@@ -31,7 +31,7 @@
             <el-form-item label="节目描述" prop="festivalText">
               <el-input v-model="ruleForm.festivalText" type="textarea" placeholder="请输入节目描述"></el-input>
             </el-form-item>
-            <el-form-item label="专题背景" prop="background">
+            <el-form-item label="商品列表背景" prop="background">
                <el-upload
                   class="avatar-uploader"
                   :action="uploadUrl"
@@ -90,7 +90,7 @@
               <el-input-number v-model="ruleForm.sortOrder" controls-position="right" @change="handleChange" :min="1"></el-input-number>
               <div class="tips">1为优先级别最高</div>
             </el-form-item>
-            <el-form-item label="封面图片" prop="imageUrlCover">
+            <el-form-item label="专题封面图片" prop="imageUrlCover">
               <el-upload
                   class="avatar-uploader"
                   :action="uploadUrl"

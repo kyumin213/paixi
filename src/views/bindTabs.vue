@@ -4,6 +4,7 @@
   
        </div>
        <div style="text-align:right">
+        <el-button type="danger" @click="clearTab()">清空</el-button>
          <span>{{str}}</span>
          <el-button type="primary" @click="subBindTab()">确认绑定</el-button>
        </div>
@@ -37,7 +38,11 @@ export default {
       this.getShopIdByTab();
     }
   },
-  created() {},
+  created() {
+    let _this = this;
+    let id = sessionStorage.getItem("id");
+    console.log(id);
+  },
 
   mounted: function() {
     var _this = this;
@@ -48,7 +53,7 @@ export default {
       children: []
     };
     var m = [20, 120, 20, 40], //20、120、top、left 位置
-      w = 1280 - m[1] - m[3],
+      w = 1780 - m[1] - m[3],
       h = 800 - m[0] - m[2],
       i = 0,
       root;
@@ -239,7 +244,7 @@ export default {
     }
     function getNode(parentId) {
       $.ajax({
-        url: "https://testcms.prise.shop/hierarchys/get/id",
+        url: baseUrl + "hierarchys/get/id",
         data: {
           parentId: parentId == 1 ? 0 : parentId,
           token: _this.token
@@ -291,10 +296,11 @@ export default {
         // d.checked = true;
         getNode(d.id);
         // d.children = mnodes;
-      } if (d.checked == true) {
+      }
+      if (d.checked == true) {
         d.checked = false;
       } else {
-        d.checked == true
+        d.checked == true;
       }
     }
     // 新增子级
@@ -318,6 +324,12 @@ export default {
   },
 
   methods: {
+    //   清空选择标签
+    clearTab() {
+      let _this = this;
+      _this.bindTxt = "";
+      _this.str = "";
+    },
     // 获取全部标签
     getALLTabs() {
       let _this = this;
@@ -337,10 +349,10 @@ export default {
     getShopIdByTab() {
       let _this = this;
       var ids = this.$route.params.id;
-
+      let productId = sessionStorage.getItem("id");
       $.get(
         baseUrl + "productaidata/get/id",
-        { token: _this.token, productId: this.$route.params.id },
+        { token: _this.token, productId: productId },
         data => {
           if (data.status == 200) {
             _this.tabList = data.bean;
@@ -354,13 +366,14 @@ export default {
     subBindTab() {
       let _this = this;
       let newStr = _this.str;
+      let productId = sessionStorage.getItem("id");
       $.ajax({
         url: baseUrl + "productaidata/add/or/update",
         type: "POST",
         dataType: "json",
         data: {
           token: _this.token,
-          productId: this.$route.params.id,
+          productId: productId,
           aidata: newStr
         }
       })
@@ -407,8 +420,8 @@ export default {
   text-align: right;
 }
 #body {
-  width: 1200px;
-  margin: 0 auto;
+  /* width: 1200px; */
+  margin: 0;
   position: relative;
 }
 

@@ -176,7 +176,6 @@
           <el-form-item label="商品备注链接地址">
             <el-input v-model="ruleForm.remarkUrl" placeholder="请输入商品链接地址"></el-input>
           </el-form-item>
-            
             <el-form-item label="商品封面图" prop="pictureCover" class="cover">
                 <el-upload
                   class="avatar-uploader"
@@ -184,7 +183,7 @@
                   name="uploadFile"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
-                  :data="upLoadData">
+                  :data="upLoadData" accept="image/png,image/gif,image/jpeg,image/jpg">
                   <img v-if="ruleForm.pictureCover" :src="ruleForm.pictureCover" class="avatar">
                   <!-- <i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
                   <el-button v-else size="small" type="primary">上传图片</el-button>
@@ -205,7 +204,7 @@
                   :on-success="handleAvatarSuccessBanner" 
                   :http-request="uploadFileRequest"  
                   :file-list = "ruleForm.pictureBanner"            
-                  list-type="picture-card"
+                  list-type="picture-card" accept="image/png,image/gif,image/jpeg,image/jpg"
                   >
                   <i class="el-icon-plus avatar-uploader-icon" style="width:148px;height:148px;line-height:148px;"></i>
                   <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb。最多上传5张</div>
@@ -227,6 +226,7 @@
                   :file-list="ruleForm.details"        
                   :http-request="uploadFileRequestDetails"
                   list-type="picture-card"
+                  accept="image/png,image/gif,image/jpeg,image/jpg"
                   >
                   <i class="el-icon-plus avatar-uploader-icon" style="width:148px;height:148px;line-height:148px;"></i>
                   <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb。最多上传15张</div>
@@ -281,16 +281,16 @@
 .saveBtn {
   margin-left: 10px;
 }
-.addBtn{
+.addBtn {
   cursor: pointer;
   color: #409eff;
   font-size: 24px;
   font-weight: bold;
 }
-.addgoods{
+.addgoods {
   margin-top: 20px;
 }
-.el-dialog{
+.el-dialog {
   width: 30%;
 }
 .add-contanier {
@@ -315,13 +315,13 @@
   height: 100px;
   line-height: 100px;
 }
-.goods-skulist .avatar{
-   width: 100px;
-   height: 100px;
+.goods-skulist .avatar {
+  width: 100px;
+  height: 100px;
 }
-.cover .avatar{
-   width: 178px;
-   height: 178px;
+.cover .avatar {
+  width: 178px;
+  height: 178px;
 }
 .prop-box {
   /* display: inline-block; */
@@ -331,308 +331,318 @@
 .goodsInfo .el-input {
   width: 40%;
 }
-.info-box{
+.info-box {
   /* display: inline-block; */
   width: 40%;
   margin-bottom: 10px;
 }
-
 </style>
 
 <script>
-import { baseUrl } from '@/config/env'
-import { baseImgPath } from '@/config/env'
-import { getStore } from '@/config/mUtils'
+import { baseUrl } from "@/config/env";
+import { baseImgPath } from "@/config/env";
+import { getStore } from "@/config/mUtils";
 export default {
-  name: 'EditGoods',
+  name: "EditGoods",
   data() {
     return {
-      token: getStore('token'),
+      token: getStore("token"),
       isShowSecond: false,
       dialogFormVisible: false,
       dialogFormVisible2: false,
-      uploadUrl: baseImgPath + 'picture/oss/upload/multi',
-      uploadUrlMul: baseImgPath + 'picture/oss/upload/multi/list',
+      uploadUrl: baseImgPath + "picture/oss/upload/multi",
+      uploadUrlMul: baseImgPath + "picture/oss/upload/multi/list",
       id: this.$route.params.id,
       showPrice: false,
       tableData: [],
-      templateData: '',
+      templateData: "",
       upLoadData: {
-        token: getStore('token'),
+        token: getStore("token")
         // fileName: 'http://image.prise.shop/images/2018/04/03/1522736335352510.png'
       },
       ruleForm: {
-        title: '',
-        cateGoryName: '',
-        sellingPoint: '',
-        basePrice: '',
-        isSeaAmoy: '',
-        iSpage: '',
+        title: "",
+        cateGoryName: "",
+        sellingPoint: "",
+        basePrice: "",
+        isSeaAmoy: "",
+        iSpage: "0",
         param: [],
-        information: [{
-          infoName: '',
-          value: ''
-        }],
+        information: [
+          {
+            infoName: "",
+            value: ""
+          }
+        ],
         serves: [],
-        pictureCover: '',
+        pictureCover: "",
         pictureBanner: [],
         details: [],
         arrBanner: [],
         arrDetails: [],
-        remarkContent: '',
-        remarkUrl: '',
+        remarkContent: "",
+        remarkUrl: "",
         stockBase: 0
       },
       rules: {
-        title: [
-          { required: true, message: '请输入商品标题', trigger: 'blur' }
-        ],
+        title: [{ required: true, message: "请输入商品标题", trigger: "blur" }],
         sellingPoint: [
-          { required: true, message: '请输入商品介绍', trigger: 'blur' }
+          { required: true, message: "请输入商品介绍", trigger: "blur" }
         ],
         basePrice: [
-          { required: true, message: '请输入商品现价', trigger: 'blur' }
+          { required: true, message: "请输入商品现价", trigger: "blur" }
         ],
         beforePrice: [
-          { required: true, message: '请输入商品原价', trigger: 'blur' }
+          { required: true, message: "请输入商品原价", trigger: "blur" }
         ],
-        pictureCover: [
-          { required: true, message: '请上传封面图' }
-        ],
-        pictureBanner: [
-          { required: true, message: '请上传banner图' }
-        ],
-        details: [
-          { required: true }
-        ],
-        isSeaAmoy: [
-          { required: true }
-        ],
-        param: [
-          { required: true, message: '请输入商品属性'  }
-        ],
-        information: [
-          { required: true, message: '请输入商品基本信息'  }
-        ],
-        serves: [
-          { required: true, message: '请输入商品服务承诺'  }
-        ]
+        pictureCover: [{ required: true, message: "请上传封面图" }],
+        pictureBanner: [{ required: true, message: "请上传banner图" }],
+        details: [{ required: true }],
+        isSeaAmoy: [{ required: true }],
+        param: [{ required: true, message: "请输入商品属性" }],
+        information: [{ required: true, message: "请输入商品基本信息" }],
+        serves: [{ required: true, message: "请输入商品服务承诺" }]
       },
       form: {
-        name: '',
+        name: "",
         options: [],
         secondOptions: [],
-        categoryId: '',
-        categoryIdSecond: ''
+        categoryId: "",
+        categoryIdSecond: ""
       },
-      formLabelWidth: '120px',
+      formLabelWidth: "120px",
       template: {
-        name: ''
+        name: ""
       }
-    }
+    };
   },
   methods: {
-    getGoodsInfo () {
-      $.get(baseUrl + 'product/get/id', {token: this.token, id: this.id}, (data) => {
-        if (data.status == 200) {
-            console.log(data.bean)
-          this.ruleForm.title = data.bean.title
-          this.ruleForm.basePrice = data.bean.basePrice
-          this.ruleForm.beforePrice = data.bean.beforePrice
-          this.ruleForm.sellingPoint = data.bean.sellingPoint
-          this.ruleForm.pictureCover = data.bean.pictureCover
-          this.ruleForm.remarkUrl = data.bean.remarkUrl
-          this.ruleForm.remarkContent = data.bean.remarkContent
-          this.ruleForm.stockBase = data.bean.stockBase
-          this.ruleForm.isSeaAmoy = data.bean.isSeaAmoy.toString()
-          this.ruleForm.iSpage = data.bean.iSpage.toString() || '0'
-          var pictureBanner = data.bean.pictureBanner.split(',')
-          var details = data.bean.details.split(',')
-          for(var i in pictureBanner) {
+    getGoodsInfo() {
+      $.get(
+        baseUrl + "product/get/id",
+        { token: this.token, id: this.id },
+        data => {
+          if (data.status == 200) {
+            console.log(data.bean);
+            this.ruleForm.title = data.bean.title;
+            this.ruleForm.basePrice = data.bean.basePrice;
+            this.ruleForm.beforePrice = data.bean.beforePrice;
+            this.ruleForm.sellingPoint = data.bean.sellingPoint;
+            this.ruleForm.pictureCover = data.bean.pictureCover;
+            this.ruleForm.remarkUrl = data.bean.remarkUrl;
+            this.ruleForm.remarkContent = data.bean.remarkContent;
+            this.ruleForm.stockBase = data.bean.stockBase;
+            this.ruleForm.isSeaAmoy = data.bean.isSeaAmoy.toString();
+            this.ruleForm.iSpage = data.bean.iSpage.toString() || "0";
+            var pictureBanner = data.bean.pictureBanner.split(",");
+            var details = data.bean.details.split(",");
+            for (var i in pictureBanner) {
               this.ruleForm.pictureBanner.push({
-                  url: pictureBanner[i]
-              })
-          }
-          for(var i in details) {
+                url: pictureBanner[i]
+              });
+            }
+            for (var i in details) {
               this.ruleForm.details.push({
-                  url: details[i]
-              })
+                url: details[i]
+              });
+            }
+            var paramArr = JSON.parse(data.bean.param).children;
+            for (var i in paramArr) {
+              this.ruleForm.param.push({
+                value: paramArr[i].major,
+                skuImg: paramArr[i].skuImg
+              });
+            }
+            this.ruleForm.information = JSON.parse(data.bean.information);
+            this.tableData = JSON.parse(data.bean.skuList);
+            this.ruleForm.categoryId = data.bean.categoryId;
+            this.ruleForm.serves = JSON.parse(data.bean.serves);
+            $.get(
+              baseUrl + "product/category/get",
+              { token: this.token, id: this.ruleForm.categoryId },
+              data => {
+                if (data.status == 200) {
+                  this.ruleForm.cateGoryName = data.bean.name;
+                  this.isShowAddGoods = true;
+                } else {
+                  this.$message.error(data.msg);
+                }
+              }
+            );
           }
-          var paramArr = JSON.parse(data.bean.param).children
-          for (var i in paramArr) {
-            this.ruleForm.param.push({
-              value: paramArr[i].major,
-              skuImg: paramArr[i].skuImg
-            })
-          }
-          this.ruleForm.information = JSON.parse(data.bean.information)
-          this.tableData = JSON.parse(data.bean.skuList)
-          this.ruleForm.categoryId = data.bean.categoryId
-          this.ruleForm.serves = JSON.parse(data.bean.serves)
-          $.get(baseUrl + 'product/category/get',{token: this.token, id: this.ruleForm.categoryId }, (data) => {
-            if (data.status == 200) {
-              this.ruleForm.cateGoryName = data.bean.name
-              this.isShowAddGoods = true
+        }
+      );
+    },
+    popBox() {
+      this.dialogFormVisible = true;
+      this.remoteMethod();
+    },
+    selectSecondCategory() {
+      var id = this.form.categoryId;
+      $.get(
+        baseUrl + "product/category/get/children",
+        { token: this.token, id: id },
+        data => {
+          if (data.status == 200) {
+            if (data.bean.length < 1) {
+              this.isShowSecond = false;
+              this.form.secondOptions = data.bean;
             } else {
-              this.$message.error(data.msg)
-            }  
-          })
-
-        }
-      })
-    },
-    popBox () {
-      this.dialogFormVisible = true
-      this.remoteMethod()
-    },
-    selectSecondCategory () {
-      var id = this.form.categoryId
-      $.get(baseUrl + 'product/category/get/children',{token: this.token, id: id}, (data) => {
-        if (data.status == 200) {
-          if (data.bean.length<1) {
-            this.isShowSecond = false
-            this.form.secondOptions = data.bean
+              this.isShowSecond = true;
+              this.form.secondOptions = data.bean;
+            }
           } else {
-            this.isShowSecond = true
-            this.form.secondOptions = data.bean
+            this.$message.error(data.msg);
           }
-        } else {
-          this.$message.error(data.msg)
-        }  
-      })
-    },
-    remoteMethod () {
-      $.get(baseUrl + 'product/category/get/children', {token: this.token, id: 0}, (data) => {
-        console.log(data.bean)
-        if (data.status == 200) {
-          this.form.options = data.bean
-        } else {
-          this.$message.error(data.msg)
         }
-      })
+      );
     },
-    selectCategory () {
-      this.dialogFormVisible = false
-      console.log(this.form.categoryId)
-      var categoryId = this.form.categoryIdSecond != ''?this.form.categoryIdSecond:this.form.categoryId||this.ruleForm.categoryId
-      $.get(baseUrl + 'product/category/get',{token: this.token, id: categoryId }, (data) => {
-        if (data.status == 200) {
-          this.ruleForm.cateGoryName = data.bean.name
-          this.isShowAddGoods = true
-          this.form.categoryId = data.bean.id
-        } else {
-          this.$message.error(data.msg)
-        }  
-      })
+    remoteMethod() {
+      $.get(
+        baseUrl + "product/category/get/children",
+        { token: this.token, id: 0 },
+        data => {
+          console.log(data.bean);
+          if (data.status == 200) {
+            this.form.options = data.bean;
+          } else {
+            this.$message.error(data.msg);
+          }
+        }
+      );
+    },
+    selectCategory() {
+      this.dialogFormVisible = false;
+      console.log(this.form.categoryId);
+      var categoryId =
+        this.form.categoryIdSecond != ""
+          ? this.form.categoryIdSecond
+          : this.form.categoryId || this.ruleForm.categoryId;
+      $.get(
+        baseUrl + "product/category/get",
+        { token: this.token, id: categoryId },
+        data => {
+          if (data.status == 200) {
+            this.ruleForm.cateGoryName = data.bean.name;
+            this.isShowAddGoods = true;
+            this.form.categoryId = data.bean.id;
+          } else {
+            this.$message.error(data.msg);
+          }
+        }
+      );
       // Todo 根据category的ID选择相应模板
     },
-    addServes () {
+    addServes() {
       this.ruleForm.serves.push({
-        servesName: ''
-      })
+        servesName: ""
+      });
     },
     removeServes(item) {
-      var index = this.ruleForm.serves.indexOf(item)
+      var index = this.ruleForm.serves.indexOf(item);
       if (index !== -1) {
-        this.ruleForm.serves.splice(index, 1)
+        this.ruleForm.serves.splice(index, 1);
       }
     },
     removeProps(item) {
-      var index = this.ruleForm.param.indexOf(item)
+      var index = this.ruleForm.param.indexOf(item);
       if (index !== -1) {
-        this.ruleForm.param.splice(index, 1)
+        this.ruleForm.param.splice(index, 1);
       }
     },
     addProps() {
       this.ruleForm.param.push({
-        value: ''
-      })
-      console.log(this.ruleForm.param)
+        value: ""
+      });
+      console.log(this.ruleForm.param);
     },
-    saveProps () {
+    saveProps() {
       var param = {
-        'major': '通用',
-        'describe': '',
-        'isParent': 1,
-        'choose': null,
-        'children': []
-      }
+        major: "通用",
+        describe: "",
+        isParent: 1,
+        choose: null,
+        children: []
+      };
       for (var i in this.ruleForm.param) {
-        var obj = {}
-        obj.major = this.ruleForm.param[i].value
-        obj.skuImg = this.ruleForm.param[i].skuImg
-        obj.sku = 1 + '' + (parseInt(i)+1)
-        param.children.push(obj)
+        var obj = {};
+        obj.major = this.ruleForm.param[i].value;
+        obj.skuImg = this.ruleForm.param[i].skuImg;
+        obj.sku = 1 + "" + (parseInt(i) + 1);
+        param.children.push(obj);
       }
-      this.showPrice = true
-      this.tableData = param.children
+      this.showPrice = true;
+      this.tableData = param.children;
       // param = JSON.stringify(param)
       // console.log(param)
     },
-    handleskuImgSuccess (res, file, list, index) {
-      console.log(index)      
+    handleskuImgSuccess(res, file, list, index) {
+      console.log(index);
       if (res.status == 200) {
-        this.tableData[index].skuImg = res.bean      
+        this.tableData[index].skuImg = res.bean;
       }
     },
     removeInfo(item) {
-      var index = this.ruleForm.information.indexOf(item)
+      var index = this.ruleForm.information.indexOf(item);
       if (index !== -1) {
-        this.ruleForm.information.splice(index, 1)
+        this.ruleForm.information.splice(index, 1);
       }
     },
     addInfo() {
       this.ruleForm.information.push({
-        value: ''
-      })
-      console.log(this.ruleForm.information)
+        value: ""
+      });
+      console.log(this.ruleForm.information);
     },
     saveForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          this.dialogFormVisible2 = true
-        }   
-      })
+          this.dialogFormVisible2 = true;
+        }
+      });
     },
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         if (valid) {
           var param = {
-            'major': '通用',
-            'describe': '',
-            'isParent': 1,
-            'choose': null,
-            'children': []
-          }
+            major: "通用",
+            describe: "",
+            isParent: 1,
+            choose: null,
+            children: []
+          };
           for (var i in this.ruleForm.param) {
-            var obj = {}
-            obj.major = this.ruleForm.param[i].value
-            obj.skuImg = this.ruleForm.param[i].skuImg
-            obj.sku = 1 + '' + (parseInt(i)+1)
-            param.children.push(obj)
+            var obj = {};
+            obj.major = this.ruleForm.param[i].value;
+            obj.skuImg = this.ruleForm.param[i].skuImg;
+            obj.sku = 1 + "" + (parseInt(i) + 1);
+            param.children.push(obj);
             // param.children.push(this.ruleForm.param[i].value)
           }
-          var pictureBanner = []
-          var details = []
+          var pictureBanner = [];
+          var details = [];
           for (var i in this.ruleForm.pictureBanner) {
-            pictureBanner.push(this.ruleForm.pictureBanner[i].url)
+            pictureBanner.push(this.ruleForm.pictureBanner[i].url);
           }
           for (var i in this.ruleForm.details) {
-            details.push(this.ruleForm.details[i].url)
+            details.push(this.ruleForm.details[i].url);
           }
-          pictureBanner = pictureBanner.toString()
-          details = details.toString()
-          param = JSON.stringify(param)
-          var information = JSON.stringify(this.ruleForm.information)
-          var serves = JSON.stringify(this.ruleForm.serves)
-          var skuList = JSON.stringify(this.tableData)
-          console.log(skuList)
-          var categoryId = this.form.categoryIdSecond != ''?this.form.categoryIdSecond : this.form.categoryId||this.ruleForm.categoryId
-          console.log(categoryId)
+          pictureBanner = pictureBanner.toString();
+          details = details.toString();
+          param = JSON.stringify(param);
+          var information = JSON.stringify(this.ruleForm.information);
+          var serves = JSON.stringify(this.ruleForm.serves);
+          var skuList = JSON.stringify(this.tableData);
+          console.log(skuList);
+          var categoryId =
+            this.form.categoryIdSecond != ""
+              ? this.form.categoryIdSecond
+              : this.form.categoryId || this.ruleForm.categoryId;
+          console.log(categoryId);
           $.ajax({
-            url: baseUrl + 'product/modify',
-            type: 'POST',
-            dataType: 'json',
+            url: baseUrl + "product/modify",
+            type: "POST",
+            dataType: "json",
             data: {
               id: this.id,
               token: this.token,
@@ -655,166 +665,165 @@ export default {
               stockBase: this.ruleForm.stockBase
             }
           })
-          .done((data) => {
-            console.log(data)
-            if (data.status == 200) {
-              this.$message({
-                type: "success",
-                message: "修改商品信息成功！"
-              })
-              this.$router.back(-1)
-              // this.$router.go(0)
-              // this.$router.push({ path: '/goodsList' })
-            } else {
-              this.$message.error(data.msg)
-            }
-          })
-          .fail((data) => {
-            console.log(data)
-          })
+            .done(data => {
+              console.log(data);
+              if (data.status == 200) {
+                this.$message({
+                  type: "success",
+                  message: "修改商品信息成功！"
+                });
+                this.$router.back(-1);
+                // this.$router.go(0)
+                // this.$router.push({ path: '/goodsList' })
+              } else {
+                this.$message.error(data.msg);
+              }
+            })
+            .fail(data => {
+              console.log(data);
+            });
 
-          return false
+          return false;
         } else {
-          console.log('error submit!!')
+          console.log("error submit!!");
           return false;
         }
-      })
+      });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
     handleAvatarSuccess(res, file) {
+      console.log(res);
       if (res.status == 200) {
-        this.ruleForm.pictureCover = res.bean
+        this.ruleForm.pictureCover = res.bean;
       }
     },
     handleAvatarSuccessBanner(res, file) {
       if (res.status == 200) {
-        console.log(res.bean)
+        console.log(res.bean);
         this.ruleForm.pictureBanner.push({
           url: res.bean
-        })
-        console.log(this.ruleForm.pictureBanner)
+        });
+        console.log(this.ruleForm.pictureBanner);
       }
     },
     // 自定义banner上传
-    uploadFileRequest(file){  
-        this.formData.append('uploadFiles', file.file);
+    uploadFileRequest(file) {
+      this.formData.append("uploadFiles", file.file);
     },
     // 自定义详情图片上传
-    uploadFileRequestDetails(file){     
-        this.formDataDetail.append('uploadFiles', file.file);
+    uploadFileRequestDetails(file) {
+      this.formDataDetail.append("uploadFiles", file.file);
     },
     // banner图片上传至服务器
-    subPicForm(){
-        this.formData = new FormData()        
-        this.$refs.upload.submit();  
-        $.ajax({
-          url: baseImgPath + 'picture/oss/upload/multi/list',
-          type: 'POST',
-          dataType: 'json',
-          contentType: false,
-          processData:false,
-          mimeType: "multipart/form-data",
-          data: this.formData
-        })
-        .done((data) => {
-          if (data.status == 200) {
-            this.ruleForm.arrBanner = data.bean            
-            for (var i in this.ruleForm.arrBanner) {
-              this.ruleForm.pictureBanner.push({
-                url: this.ruleForm.arrBanner[i].url
-              })
-            }
-            console.log(this.ruleForm.pictureBanner)
+    subPicForm() {
+      this.formData = new FormData();
+      this.$refs.upload.submit();
+      $.ajax({
+        url: baseImgPath + "picture/oss/upload/multi/list",
+        type: "POST",
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        mimeType: "multipart/form-data",
+        data: this.formData
+      }).done(data => {
+        if (data.status == 200) {
+          this.ruleForm.arrBanner = data.bean;
+          for (var i in this.ruleForm.arrBanner) {
+            this.ruleForm.pictureBanner.push({
+              url: this.ruleForm.arrBanner[i].url
+            });
           }
-        })              
+          console.log(this.ruleForm.pictureBanner);
+        }
+      });
     },
     // 详情图片上传至服务器
-    subDetailPicForm(){
-        this.formDataDetail = new FormData()        
-        this.$refs.uploadDetail.submit();  
-        $.ajax({
-          url: baseImgPath + 'picture/oss/upload/multi/list',
-          type: 'POST',
-          dataType: 'json',
-          contentType: false,
-          processData:false,
-          mimeType: "multipart/form-data",
-          data: this.formDataDetail
-        })
-        .done((data) => {
-          if (data.status == 200) {
-            this.ruleForm.arrDetails = data.bean            
-            for (var i in this.ruleForm.arrDetails) {
-              this.ruleForm.details.push({
-                url: this.ruleForm.arrDetails[i].url
-              })
-            }
-            console.log(this.ruleForm.details)
-          }
-        })              
-    },
-    deleteImgUrl (url) {
+    subDetailPicForm() {
+      this.formDataDetail = new FormData();
+      this.$refs.uploadDetail.submit();
       $.ajax({
-        url: baseImgPath + 'picture/oss/remove/file',
-        type: 'POST',
-        dataType: 'json',
+        url: baseImgPath + "picture/oss/upload/multi/list",
+        type: "POST",
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        mimeType: "multipart/form-data",
+        data: this.formDataDetail
+      }).done(data => {
+        if (data.status == 200) {
+          this.ruleForm.arrDetails = data.bean;
+          for (var i in this.ruleForm.arrDetails) {
+            this.ruleForm.details.push({
+              url: this.ruleForm.arrDetails[i].url
+            });
+          }
+          console.log(this.ruleForm.details);
+        }
+      });
+    },
+    deleteImgUrl(url) {
+      $.ajax({
+        url: baseImgPath + "picture/oss/remove/file",
+        type: "POST",
+        dataType: "json",
         data: {
           fileName: url
         }
       })
-      .done((data) => {
-        
-      })
-      .fail((data) => {
-        console.log(data)
-      })
+        .done(data => {})
+        .fail(data => {
+          console.log(data);
+        });
     },
     // 移除上传的banner图片
     handleRemoveBanner(file, fileList) {
-      var imgurl = file.url.toString()
-      if (imgurl.indexOf('blob') > -1) {
-     
+      var imgurl = file.url.toString();
+      if (imgurl.indexOf("blob") > -1) {
       } else {
-        this.ruleForm.pictureBanner = this.ruleForm.pictureBanner.filter(t => t.url != file.url) 
+        this.ruleForm.pictureBanner = this.ruleForm.pictureBanner.filter(
+          t => t.url != file.url
+        );
       }
-      this.deleteImgUrl(file.url)  
+      this.deleteImgUrl(file.url);
     },
     handleAvatarSuccessDetails(res, file) {
       if (res.status == 200) {
-        console.log(res.bean)
+        console.log(res.bean);
         this.ruleForm.details.push({
           url: res.bean
-        })
-        console.log(this.ruleForm.details)
+        });
+        console.log(this.ruleForm.details);
       }
     },
-    handleRemove(file, fileList) {   
-      console.log(file.url)
-      var imgurl = file.url.toString()
-      if (imgurl.indexOf('blob') > -1) {
-
-      } else {     
-        this.ruleForm.details = this.ruleForm.details.filter(t => t.url != file.url) 
+    handleRemove(file, fileList) {
+      console.log(file.url);
+      var imgurl = file.url.toString();
+      if (imgurl.indexOf("blob") > -1) {
+      } else {
+        this.ruleForm.details = this.ruleForm.details.filter(
+          t => t.url != file.url
+        );
       }
-      this.deleteImgUrl(file.url)
+      this.deleteImgUrl(file.url);
     },
     handlePreview(file) {
-      console.log(file)
+      console.log(file);
     }
   },
   watch: {
-    '$route' (to, from) {
-      if (from.path === '/goodsList' || from.name === 'ThemeDetails') {
-        this.$router.go(0)
-        this.id = to.params.id
-        this.getGoodsInfo()
+    $route(to, from) {
+      if (from.path === "/goodsList" || from.name === "ThemeDetails") {
+        this.$router.go(0);
+        this.id = to.params.id;
+        this.getGoodsInfo();
       }
     }
   },
-  created () {
-    this.getGoodsInfo()
+  created() {
+    this.getGoodsInfo();
   }
-}
+};
 </script>
